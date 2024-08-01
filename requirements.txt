@@ -2,3 +2,4 @@ python-tgpt
 telebot
 g4f
 requests
+curl_cffi

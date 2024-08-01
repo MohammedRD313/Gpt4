@@ -25,8 +25,7 @@ def gptMessage(message):
         bot.send_message(message.chat.id, 'آسف، أنت محظور من استخدام هذا البوت.')
     else:
         resp = gpt(message.text)
-        bot.send_message(message.chat.id, f'<b>العقرب : <b> {resp}')
-
+        bot.send_message(message.chat.id, f'<b>العقرب : {resp}</b>', parse_mode='HTML')
 # معالجة أوامر المشرف
 @bot.message_handler(commands=['ban', 'unban'])
 def admin_commands(message):

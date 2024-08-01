@@ -6,6 +6,6 @@ RUN pip3 install -U pip
 
 COPY . /app/
 WORKDIR /app/
-RUN pip3 install -U -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
 CMD bash start

@@ -1,28 +1,37 @@
-import pytgpt.phind
+import openai
+import os
 
-# إنشاء مثيل من بوت PHIND
-bot = pytgpt.phind.PHIND()
+# الحصول على مفتاح API من المتغير البيئي
+openai.api_key = os.getenv('API_KEY')
 
 def gpt(message: str) -> str:
     """
-    إرسال رسالة إلى بوت PHIND واستلام الرد.
+    إرسال رسالة إلى نموذج GPT واستلام الرد.
 
-    :param message: الرسالة التي سيتم إرسالها إلى البوت.
-    :return: الرد من البوت.
+    :param message: الرسالة التي سيتم إرسالها إلى النموذج.
+    :return: الرد من النموذج.
     """
     try:
         # التحقق من أن الرسالة ليست فارغة
         if not message.strip():
             raise ValueError("الرسالة لا يمكن أن تكون فارغة.")
-        
-        # إرسال الرسالة واستلام الرد
-        response = bot.chat(message)
-        
+
+        # إرسال الرسالة إلى نموذج GPT واستلام الرد
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # استخدم النموذج الذي تفضله
+            messages=[
+                {"role": "user", "content": message}
+            ]
+        )
+
+        # استخراج الرد من الاستجابة
+        reply = response.choices[0].message['content'].strip()
+
         # التحقق من أن الرد ليس فارغًا
-        if not response.strip():
-            raise ValueError("الرد من البوت كان فارغًا.")
-        
-        return response
+        if not reply:
+            raise ValueError("الرد من النموذج كان فارغًا.")
+
+        return reply
     except Exception as e:
         # معالجة الأخطاء وإرجاع رسالة توضيحية
         return f"حدث خطأ: {e}"

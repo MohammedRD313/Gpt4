@@ -4,8 +4,6 @@ import os
 
 # إنشاء البوت
 bot = telebot.TeleBot(os.environ['TOKEN'])
-GPT_ENGINE = os.environ.get('GPT_ENGINE', 'gpt-4o')
-API_URL = os.environ.get('API_URL', 'https://api.openai.com/v1/chat/completions')
 # تعيين معرّف المشرف
 ADMIN_ID = 815010872  # استبدل هذا الرقم بمعرّف المشرف
 

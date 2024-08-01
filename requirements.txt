@@ -1,3 +1,4 @@
 python-tgpt
 telebot
 g4f
+requests

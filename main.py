@@ -17,7 +17,7 @@ def start(message):
     if message.from_user.id in banned_users:
         bot.send_message(message.chat.id, 'آسف، أنت محظور من استخدام هذا البوت.')
     else:
-        bot.send_message(message.chat.id, '<b>✎┊‌ اهلا بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب<br><br>يمكنك طرح اي سؤال او خدمه وسيتم الاجآبه عنها إن شاء الله :</b>', parse_mode='HTML')
+        bot.send_message(message.chat.id, '<b>✎┊‌ اهلا بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب يمكنك طرح اي سؤال او خدمه وسيتم الاجآبه عنها إن شاء الله :</b>', parse_mode='HTML')
         # معالجة الرسائل النصية
 @bot.message_handler(content_types=['text'])
 def gptMessage(message):

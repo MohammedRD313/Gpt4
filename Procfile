@@ -1,2 +1,1 @@
-worker: python bot.py
-web: pip install python-telegram-bot openai
+worker: python main.py

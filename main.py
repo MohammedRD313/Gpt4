@@ -1,5 +1,5 @@
 import telebot
-from gpt import gpt
+from gpt3 import gpt3
 import os
 
 bot = telebot.TeleBot(os.environ['TOKEN'])
@@ -11,7 +11,7 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def gptMessage(message):
-    resp = gpt(message)
+    resp = gpt3(message)
     bot.send_message(message.chat.id, f'<b>العقرب : {resp}</b>', parse_mode='HTML')
 
 bot.infinity_polling()

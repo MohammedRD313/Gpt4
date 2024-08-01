@@ -28,8 +28,7 @@ def gpt_message(message):
       bot.send_message(
     message.chat.id,
     '**✎┊‌ اهلا بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب يمكنك طرح أي سؤال أو خدمة وسيتم الإجابة عنها إن شاء الله 😁**\n**المطور [𝗠𝗼𝗵𝗮𝗺𝗲𝗱](https://t.me/Zo_r0)** \n**المطور [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l ) **',
-    parse_mode='Markdown',
-    disable_web_page_preview=True
+    parse_mode='Markdown'
 ) # معالجة أوامر المشرف
 @bot.message_handler(commands=['ban', 'unban'])
 def admin_commands(message):

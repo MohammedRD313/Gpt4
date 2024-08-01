@@ -18,7 +18,7 @@ def gpt(message: str) -> str:
 
         # إرسال الرسالة إلى نموذج GPT واستلام الرد
         response = openai.ChatCompletion.create(
-            model="gpt-3",  # استخدم النموذج الذي تفضله
+            model="claude-3-opus-20240229",  # استخدم النموذج الذي تفضله
             messages=[
                 {"role": "user", "content": message}
             ]

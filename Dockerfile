@@ -7,5 +7,5 @@ RUN pip3 install -U pip
 COPY . /app/
 WORKDIR /app/
 RUN python -m pip install -r requirements.txt
-RUN pip install openai
+RUN pip install --upgrade openai
 CMD bash start

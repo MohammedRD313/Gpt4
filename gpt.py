@@ -1,8 +1,9 @@
-from transformers import GPT4LMHeadModel, GPT4Tokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # تحميل النموذج والمحول
-tokenizer = GPT4Tokenizer.from_pretrained('gpt-4')
-model = GPT4LMHeadModel.from_pretrained('gpt-4')
+model_name = "EleutherAI/gpt-j-6B"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
 
 def gpt(message):
     # ترميز الرسالة

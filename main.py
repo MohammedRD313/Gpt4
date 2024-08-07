@@ -17,7 +17,7 @@ user_languages = {}
 messages = {
     'ar': {
         'start': (
-            '[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰](t.me/Scorpion_scorp)\n\n'
+            '[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰](t.me/ScorGPTbot)\n\n'
             '✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.'
             'يمكنك طرح أي سؤال أو طلب خدمة، وسنكون سعداء بالإجابة عليه إن شاء الله 😁\n\n'
             'للتحويل الى اللغه الانجليزيه استخدم الأمر \n {`/language en`}\n\n'
@@ -36,7 +36,7 @@ messages = {
     },
     'en': {
         'start': (
-            '[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰](t.me/Scorpion_scorp)\n\n'
+            '[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰](t.me/ScorGPTbot)\n\n'
             '✎┊‌ Welcome to the Scorpio AI bot.\n'
             'You can ask any question or request a service, and we will be happy to answer it, God willing 😁\n\n'
             'To switch to Arabic, use the command \n {`/language ar`}\n\n'

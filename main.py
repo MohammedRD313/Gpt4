@@ -27,8 +27,10 @@ def start(message):
 def check_membership(user_id):
     try:
         member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
+        print(f"User ID: {user_id} Membership Status: {member.status}")  # سجل الحالة للمستخدم
         return member.status in ['member', 'administrator', 'creator']
-    except:
+    except Exception as e:
+        print(f"Error checking membership for user {user_id}: {e}")  # سجل الخطأ
         return False
 
 @bot.message_handler(content_types=['text'])

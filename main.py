@@ -19,11 +19,16 @@ messages = {
         'start': (
             '✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.'
             'يمكنك طرح أي سؤال أو طلب خدمة، وسنكون سعداء بالإجابة عليه إن شاء الله 😁\n\n'
-            'للتحويل الى اللغه الانجليزيه ارسل هذا الامر\n '
-            ' { `\language en` } \n\n'
+            'للتحويل الى اللغه الانجليزيه استخدم الأمر \n {`/language en`}\n\n'
             'تم الصنيع بواسطة:\n'
             'المطور [𝗠𝗼𝗵𝗮𝗺𝗲𝗱](t.me/Zo_r0) \n'
             'المطور [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)'
+        ),
+        'commands': (
+            'الأوامر المتاحة:\n'
+            '/start - بدء التفاعل مع البوت\n'
+            '/language [ar/en] - تغيير اللغة\n'
+            '/commands - عرض قائمة الأوامر'
         ),
         'set_language': 'اللغة تم تعيينها إلى العربية.',
         'error': 'حدث خطأ: {error}',
@@ -33,11 +38,16 @@ messages = {
         'start': (
             '✎┊‌ Welcome to the Scorpio AI bot.\n'
             'You can ask any question or request a service, and we will be happy to answer it, God willing 😁\n\n'
-            'To convert to Arabic, send this command\n'
-            ' {`/language ar`} \n\n'
+            'To switch to Arabic, use the command \n {`/language ar`}\n\n'
             'Created by:\n'
             'Developer [𝗠𝗼𝗵𝗮𝗺𝗲𝗱](t.me/Zo_r0) \n'
             'Developer [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)'
+        ),
+        'commands': (
+            'Available commands:\n'
+            '/start - Start interacting with the bot\n'
+            '/language [ar/en] - Change language\n'
+            '/commands - Show command list'
         ),
         'set_language': 'Language set to English.',
         'error': 'An error occurred: {error}',
@@ -66,6 +76,13 @@ def set_language(message):
         response_message = 'Please specify a language code. Usage: /language [ar/en]'
     
     bot.send_message(user_id, response_message)
+
+@bot.message_handler(commands=['commands'])
+def show_commands(message):
+    user_id = message.chat.id
+    language = user_languages.get(user_id, 'ar')  # اللغة الافتراضية هي العربية
+    commands_message = messages[language]['commands']
+    bot.send_message(user_id, commands_message)
 
 @bot.message_handler(content_types=['text'])
 def gpt_message(message):

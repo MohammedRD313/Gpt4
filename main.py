@@ -29,7 +29,7 @@ def check_membership(user_id):
         member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
         print(f"User ID: {user_id} Membership Status: {member.status}")  # سجل الحالة للمستخدم
         return member.status in ['member', 'administrator', 'creator']
-    except Exception as e:
+    except telebot.apihelper.ApiTelegramException as e:
         print(f"Error checking membership for user {user_id}: {e}")  # سجل الخطأ
         return False
 

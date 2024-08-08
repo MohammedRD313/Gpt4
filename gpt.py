@@ -1,7 +1,7 @@
 import openai
 
 # إعداد المفتاح السري من OpenAI
-openai.api_key = 'sk-proj-9ws35TnrOp5sE1LzwyiMT3BlbkFJ18CUr5JPY08sUBzjkHv5'
+openai.api_key = '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'
 
 class Bot:
     def chat(self, message):

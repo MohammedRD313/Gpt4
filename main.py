@@ -113,8 +113,7 @@ def gpt_message(message):
     user_id = message.chat.id
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     text = message.text
-    
-    if not is_valid_text(text, language):
+    if (language == 'ar' and not is_arabic(text)) or (language == 'en' and not is_english(text)):
         response_message = 'Invalid language used. Please use the selected language only.'
         format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
         if format_type == 'html':
@@ -142,13 +141,24 @@ def gpt_message(message):
         else:
             bot.send_message(user_id, error_message, parse_mode='Markdown')
 
-# دالة للتحقق من النصوص
-def is_valid_text(text, language):
-    if language == 'ar':
-        return all(c.isprintable() for c in text)  # يسمح بجميع النصوص القابلة للطباعة
-    elif language == 'en':
-        return all(c.isprintable() for c in text)  # يسمح بجميع النصوص القابلة للطباعة
-    return False
+# دوال للتحقق من اللغة
+def is_arabic(text):
+    # التحقق من النص العربي بما في ذلك الرموز الإنجليزية الشائعة
+    arabic_range = ('\u0600', '\u06FF')
+    english_punctuation = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'}
+    arabic_punctuation = {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B', '\u061F', '\u060C', '\u061B', '\u0640'}
+
+    allowed_characters = arabic_punctuation.union(english_punctuation)
+
+    return all(
+        (arabic_range[0] <= c <= arabic_range[1]) or
+        (c in allowed_characters) or
+        c.isspace() for c in text
+    )
+
+def is_english(text):
+    # التحقق من النص الإنجليزي
+    return all('a' <= c.lower() <= 'z' or c.isspace() or c in {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '>', '?', '\\', '|', '`', '~'} for c in text)
 
 # بدء الاستماع للرسائل
 bot.infinity_polling()

@@ -19,9 +19,9 @@ messages = {
     'ar': {
         'start': (
             '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>\n'
+            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>'
             '<b>يمكنك طرح أي سؤال أو طلب خدمة، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\n'
-            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n<code>/language en</code>\n\n'
+            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n{ <code>/language en</code> }\n\n'
             '<b>تم الصنيع بواسطة:</b>\n'
             'المطور <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
             'المطور <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
@@ -40,9 +40,9 @@ messages = {
     'en': {
         'start': (
             '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>\n'
+            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>'
             '<b>You can ask any question or request a service, and we will be happy to answer it, God willing 😁</b>\n\n'
-            '<b>To switch to Arabic, use the command</b> \n<code>/language ar</code>\n\n'
+            '<b>To switch to Arabic, use the command</b> \n{ <code>/language ar</code> }\n\n'
             '<b>Created by:</b>\n'
             'Developer <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
             'Developer <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'

@@ -1,7 +1,6 @@
 import telebot
 import os
 from gpt import gpt
-from spellchecker import SpellChecker
 
 # الحصول على توكن البوت من المتغير البيئي
 TOKEN = os.getenv('TOKEN')
@@ -19,9 +18,9 @@ messages = {
     'ar': {
         'start': (
             '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>'
-            '<b>يمكنك طرح أي سؤال أو طلب ، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\n'
-            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n{ <code>/language en</code>} \n\n'
+            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>\n'
+            '<b>يمكنك طرح أي سؤال أو طلب خدمة، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\n'
+            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n<code>/language en</code>\n\n'
             '<b>تم الصنيع بواسطة:</b>\n'
             'المطور <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
             'المطور <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
@@ -35,14 +34,14 @@ messages = {
         'set_language': 'تم التغيير الى اللغة العربية.',
         'set_format': 'تم تغيير التنسيق إلى {format}.',
         'error': 'حدث خطأ: {error}',
-        'response_prefix': 'العقرب: '
+        'response_prefix': '**العقرب:** '
     },
     'en': {
         'start': (
             '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>'
+            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>\n'
             '<b>You can ask any question or request a service, and we will be happy to answer it, God willing 😁</b>\n\n'
-            '<b>To switch to Arabic, use the command</b> \n{ <code>/language ar</code> }\n\n'
+            '<b>To switch to Arabic, use the command</b> \n<code>/language ar</code>\n\n'
             '<b>Created by:</b>\n'
             'Developer <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
             'Developer <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
@@ -56,12 +55,9 @@ messages = {
         'set_language': 'Language set to English.',
         'set_format': 'Format set to {format}.',
         'error': 'An error occurred: {error}',
-        'response_prefix': 'Scorpio:'
+        'response_prefix': '**Scorpio:** '
     }
 }
-
-# إنشاء كائن SpellChecker
-spell_checker = SpellChecker(language='en')
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -84,7 +80,7 @@ def set_language(message):
             response_message = 'Unsupported language. Please choose "ar" for Arabic or "en" for English.'
     else:
         response_message = 'Please specify a language code. Usage: /language [ar/en]'
-
+    
     bot.send_message(user_id, response_message)
 
 @bot.message_handler(commands=['format'])
@@ -102,7 +98,7 @@ def set_format(message):
             response_message = 'Unsupported format. Please choose "html" or "markdown".'
     else:
         response_message = 'Please specify a format. Usage: /format [html/markdown]'
-
+    
     bot.send_message(user_id, response_message)
 
 @bot.message_handler(commands=['commands'])
@@ -117,25 +113,26 @@ def gpt_message(message):
     user_id = message.chat.id
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     text = message.text
-
-    # معالجة الأخطاء الإملائية
-    if language == 'en':
-        corrected_text = ' '.join(spell_checker.candidates(word)[0] if word not in spell_checker else word for word in text.split())
-    else:
-        corrected_text = text  # لا يوجد تصحيح إملائي للنصوص العربية
-
     # التحقق من أن النص المدخل باللغة المحددة للمستخدم
-    if (language == 'ar' and is_arabic(corrected_text)) or (language == 'en' and is_english(corrected_text)):
+    if (language == 'ar' and is_arabic(text)) or (language == 'en' and is_english(text)):
         try:
             # إرسال الرسالة إلى دالة gpt واستلام الرد
-            response = gpt(corrected_text)
+            response = gpt(text)
             response_prefix = messages[language]['response_prefix']
             formatted_response = f"**{response}**"
-            bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
+            format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
+            if format_type == 'html':
+                bot.send_message(user_id, f'{response_prefix}<b>{response}</b>', parse_mode='HTML')
+            else:
+                bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
         except Exception as e:
             # التعامل مع الأخطاء وإرسال رسالة تنبيهية
             error_message = messages[language]['error'].format(error=e)
-            bot.send_message(user_id, error_message, parse_mode='Markdown')
+            format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
+            if format_type == 'html':
+                bot.send_message(user_id, f'<b>{error_message}</b>', parse_mode='HTML')
+            else:
+                bot.send_message(user_id, error_message, parse_mode='Markdown')
     else:
         error_message = 'الرجاء إرسال الرسائل باللغة المحددة.'
         bot.send_message(user_id, error_message)

@@ -59,6 +59,33 @@ messages = {
     }
 }
 
+# دالة لمعالجة الرموز في النصوص باللغة العربية
+def process_arabic_symbols(text):
+    symbols_map = {
+        '(': ' ( ',
+        ')': ' ) ',
+        '/': ' / ',
+        '+': ' + ',
+        '-': ' - ',
+        '&': ' & ',
+        '_': ' _ ',
+        '$': ' $ ',
+        '#': ' # ',
+        '@': ' @ ',
+        '!': ' ! ',
+        ':': ' : ',
+        ';': ' ; ',
+        '*': ' * ',
+        ']': ' ] ',
+        '[': ' [ ',
+        '%': ' % ',
+        '=': ' = ',
+        '|': ' | ',
+    }
+    for symbol, replacement in symbols_map.items():
+        text = text.replace(symbol, replacement)
+    return text
+
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
@@ -121,8 +148,10 @@ def gpt_message(message):
             response_prefix = messages[language]['response_prefix']
             formatted_response = f"**{response}**"
             format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
+            if language == 'ar':
+                formatted_response = process_arabic_symbols(formatted_response)
             if format_type == 'html':
-                bot.send_message(user_id, f'{response_prefix}<b>{response}</b>', parse_mode='HTML')
+                bot.send_message(user_id, f'{response_prefix}<b>{formatted_response}</b>', parse_mode='HTML')
             else:
                 bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
         except Exception as e:

@@ -1,5 +1,5 @@
 import pytgpt.phind
-
+import gpt
 # إنشاء مثيل من بوت PHIND
 bot = pytgpt.phind.PHIND()
 

@@ -121,8 +121,8 @@ def gpt_message(message):
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     text = message.text
     if (language == 'ar' and not is_arabic(text)) or (language == 'en' and not is_english(text)):
-        response_message = '✎┊‌اللغة المستخدمة غير صالحة. يرجى استخدام اللغة المحددة فقط.\n\n Invalid language used. Please use the selected language only.'
-        format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
+        response_message = '**✎┊‌اللغة المستخدمة غير صالحة. يرجى استخدام اللغة المحددة فقط.\n\n Invalid language used. Please use the selected language only.**'
+        format_type = user_preferences.get(user_id, {}).get('format', 'MarkdownV2')
         if format_type == 'html':
             bot.send_message(user_id, f'<b>{response_message}</b>', parse_mode='HTML')
         else:

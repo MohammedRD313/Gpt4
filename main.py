@@ -96,7 +96,9 @@ def gpt_message(message):
             # إرسال الرسالة إلى دالة gpt واستلام الرد
             response = gpt(text)
             response_prefix = messages[language]['response_prefix']
-            bot.send_message(user_id, f'<b>{response_prefix}{response}</b>', parse_mode='HTML')
+            # إضافة الأحرف الخلفية حول الرد لجعله يبدو ككود
+            formatted_response = f"```{response}```"
+            bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
         except Exception as e:
             # التعامل مع الأخطاء وإرسال رسالة تنبيهية
             error_message = messages[language]['error'].format(error=e)

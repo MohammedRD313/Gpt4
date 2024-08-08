@@ -5,4 +5,4 @@ requests
 curl_cffi
 openai==0.28
 transformers
-nltk
+pyspellchecker

@@ -9,5 +9,7 @@ myenv\Scripts\activate
 # على نظام macOS/Linux
 source myenv/bin/activate
 
+pip install --upgrade pytgpt
+
 # تثبيت مكتبة openai
-python main.py
+python3 main.py

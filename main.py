@@ -95,11 +95,11 @@ def set_format(message):
             language = user_preferences[user_id].get('language', 'ar')
             response_message = messages[language]['set_format'].format(format=fmt.capitalize())
         else:
-            response_message = 'Unsupported format. Please choose "html" or "markdown".'
+            response_message = '✎┊‌ لغة غير مدعومة. يرجى اختيار "ar" للغة العربية أو "en" للغة الإنجليزية. \n\n Unsupported language. Please choose "ar" for Arabic or "en" for English.'
     else:
         response_message = 'Please specify a format. Usage: /format [html/markdown]'
     
-    bot.send_message(user_id, response_message)
+    bot.send_message(user_id, response_message, parse_mode='Markdown')
 
 @bot.message_handler(commands=['commands'])
 def show_commands(message):
@@ -114,10 +114,10 @@ def gpt_message(message):
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     text = message.text
     if (language == 'ar' and not is_arabic(text)) or (language == 'en' and not is_english(text)):
-        response_message = 'Invalid language used. Please use the selected language only.'
+        response_message = '✎┊‌اللغة المستخدمة غير صالحة. يرجى استخدام اللغة المحددة فقط.\n\n Invalid language used. Please use the selected language only.'
         format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
         if format_type == 'html':
-            bot.send_message(user_id, f'<b>{response_message}</b>', parse_mode='HTML')
+            bot.send_message(user_id, f'<b>{error_message}</b>', parse_mode='HTML')
         else:
             bot.send_message(user_id, response_message, parse_mode='Markdown')
         return

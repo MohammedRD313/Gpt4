@@ -143,22 +143,15 @@ def gpt_message(message):
 
 # دوال للتحقق من اللغة
 def is_arabic(text):
-    # التحقق من النص العربي بما في ذلك الرموز الإنجليزية الشائعة
-    arabic_range = ('\u0600', '\u06FF')
-    english_punctuation = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'}
-    arabic_punctuation = {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B', '\u061F', '\u060C', '\u061B', '\u0640'}
-
-    allowed_characters = arabic_punctuation.union(english_punctuation)
-
-    return all(
-        (arabic_range[0] <= c <= arabic_range[1]) or
-        (c in allowed_characters) or
-        c.isspace() for c in text
-    )
+    # التحقق من النص العربي ودعمه للرموز الإنجليزية
+    return all('\u0600' <= c <= '\u06FF' or c.isspace() or c in {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B', 
+           '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', 
+           '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
 
 def is_english(text):
     # التحقق من النص الإنجليزي
-    return all('a' <= c.lower() <= 'z' or c.isspace() or c in {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '>', '?', '\\', '|', '`', '~'} for c in text)
+    return all('a' <= c.lower() <= 'z' or c.isspace() or c in {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', 
+           '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
 
 # بدء الاستماع للرسائل
 bot.infinity_polling()

@@ -2,10 +2,6 @@ import telebot
 import os
 from gpt import gpt
 from spellchecker import SpellChecker
-from farasa.pos import FarasaPOSTagger
-from farasa.ner import FarasaNamedEntityRecognizer
-from farasa.stemmer import FarasaStemmer
-from farasa.diacratizer import FarasaDiacritizer
 
 # الحصول على توكن البوت من المتغير البيئي
 TOKEN = os.getenv('TOKEN')
@@ -20,14 +16,52 @@ user_preferences = {}
 
 # رسائل الترحيب واستجابة خاصة لكل لغة
 messages = {
-    # الرسائل السابقة هنا
+    'ar': {
+        'start': (
+            '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
+            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>'
+            '<b>يمكنك طرح أي سؤال أو طلب ، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\n'
+            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n{ <code>/language en</code>} \n\n'
+            '<b>تم الصنيع بواسطة:</b>\n'
+            'المطور <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
+            'المطور <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
+        ),
+        'commands': (
+            '**الأوامر المتاحة:**\n'
+            '`/start` - بدء التفاعل مع البوت\n'
+            '`/language [ar/en]` - تغيير اللغة\n'
+            '`/format [html/markdown]` - تغيير تنسيق الرسائل\n'
+        ),
+        'set_language': 'تم التغيير الى اللغة العربية.',
+        'set_format': 'تم تغيير التنسيق إلى {format}.',
+        'error': 'حدث خطأ: {error}',
+        'response_prefix': 'العقرب: '
+    },
+    'en': {
+        'start': (
+            '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
+            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>'
+            '<b>You can ask any question or request a service, and we will be happy to answer it, God willing 😁</b>\n\n'
+            '<b>To switch to Arabic, use the command</b> \n{ <code>/language ar</code> }\n\n'
+            '<b>Created by:</b>\n'
+            'Developer <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
+            'Developer <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
+        ),
+        'commands': (
+            '**Available commands:**\n'
+            '`/start` - Start interacting with the bot\n'
+            '`/language [ar/en]` - Change language\n'
+            '`/format [html/markdown]` - Change message format\n'
+        ),
+        'set_language': 'Language set to English.',
+        'set_format': 'Format set to {format}.',
+        'error': 'An error occurred: {error}',
+        'response_prefix': 'Scorpio:'
+    }
 }
 
 # إنشاء كائن SpellChecker
 spell_checker = SpellChecker(language='en')
-
-# إعداد Farasa
-farasa_diacritizer = FarasaDiacritizer(interactive=True)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -87,15 +121,8 @@ def gpt_message(message):
     # معالجة الأخطاء الإملائية
     if language == 'en':
         corrected_text = ' '.join(spell_checker.candidates(word)[0] if word not in spell_checker else word for word in text.split())
-    elif language == 'ar':
-        # تصحيح الأخطاء الإملائية للنصوص العربية
-        try:
-            diacritized_text = farasa_diacritizer.diacratize(text)
-        except Exception as e:
-            diacritized_text = text  # التعامل مع الاستثناءات إن وجدت
-        corrected_text = diacritized_text
     else:
-        corrected_text = text
+        corrected_text = text  # لا يوجد تصحيح إملائي للنصوص العربية
 
     # التحقق من أن النص المدخل باللغة المحددة للمستخدم
     if (language == 'ar' and is_arabic(corrected_text)) or (language == 'en' and is_english(corrected_text)):

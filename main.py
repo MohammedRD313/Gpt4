@@ -35,7 +35,7 @@ messages = {
         'set_language': 'تم التغيير الى اللغة العربية.',
         'set_format': 'تم تغيير التنسيق إلى {format}.',
         'error': 'حدث خطأ: {error}',
-        'response_prefix': '**✎┊‌ العقرب:** '
+        'response_prefix': '**العقرب:** '
     },
     'en': {
         'start': (
@@ -56,7 +56,7 @@ messages = {
         'set_language': 'Language set to English.',
         'set_format': 'Format set to {format}.',
         'error': 'An error occurred: {error}',
-        'response_prefix': '**✎┊‌ Scorpio:** '
+        'response_prefix': '**Scorpio:** '
     }
 }
 

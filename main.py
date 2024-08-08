@@ -77,11 +77,11 @@ def set_language(message):
             user_preferences[user_id]['language'] = lang
             response_message = messages[lang]['set_language']
         else:
-            response_message = 'Unsupported language. Please choose "ar" for Arabic or "en" for English.'
+            response_message = '✎┊‌ لغة غير مدعومة. يرجى اختيار "ar" للغة العربية أو "en" للغة الإنجليزية. \n\n Unsupported language. Please choose "ar" for Arabic or "en" for English.'
     else:
         response_message = 'Please specify a language code. Usage: /language [ar/en]'
     
-    bot.send_message(user_id, response_message)
+    bot.send_message(user_id, response_message, parse_mode='Markdown')
 
 @bot.message_handler(commands=['format'])
 def set_format(message):

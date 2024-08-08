@@ -144,7 +144,7 @@ def gpt_message(message):
 # دوال للتحقق من اللغة
 def is_arabic(text):
     # التحقق من النص العربي
-    return all('\u0600' <= c <= '\u06FF' or c.isspace() or c in {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B'} for c in text)
+    return all('\u0600' <= c <= '\u06FF' or c.isspace() or c in {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
 
 def is_english(text):
     # التحقق من النص الإنجليزي

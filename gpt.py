@@ -1,5 +1,5 @@
 import pytgpt.phind
-
+import gpt
 class ChatBot:
     def __init__(self):
         self.bot = pytgpt.phind.PHIND()

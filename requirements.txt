@@ -7,3 +7,4 @@ openai==0.28
 transformers
 pyspellchecker
 farasa
+git+https://github.com/username/repository.git

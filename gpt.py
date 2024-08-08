@@ -1,16 +1,18 @@
-import pytgpt.phind
-import re
+import openai
 
-bot = pytgpt.phind.PHIND()
+# إعداد المفتاح السري من OpenAI
+openai.api_key = 'sk-proj-9ws35TnrOp5sE1LzwyiMT3BlbkFJ18CUr5JPY08sUBzjkHv5'
 
-def is_english(text):
-    return bool(re.search(r'[a-zA-Z]', text))
+class Bot:
+    def chat(self, message):
+        response = openai.Completion.create(
+            engine="gpt-4",  # يمكنك تعديل هذا بناءً على النموذج الذي تريده
+            prompt=message,
+            max_tokens=150
+        )
+        return response.choices[0].text.strip()
 
-def is_arabic(text):
-    return bool(re.search(r'[\u0600-\u06FF]', text))
+bot = Bot()
 
 def gpt(message):
-    if is_english(message) or is_arabic(message):
-        return bot.chat(f'{message}')
-    else:
-        return "الرسالة يجب أن تكون باللغة الإنجليزية أو العربية فقط."
+    return bot.chat(message)

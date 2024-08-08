@@ -1,4 +1,5 @@
 import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from gpt import gpt
 
@@ -64,7 +65,13 @@ def start(message):
     user_id = message.chat.id
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     start_message = messages[language]['start']
-    bot.send_message(user_id, start_message, parse_mode='HTML', disable_web_page_preview=True)
+
+    # إنشاء زر للاشتراك في القناة
+    markup = InlineKeyboardMarkup()
+    subscribe_button = InlineKeyboardButton("𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻 ", url="https://t.me/Scorpion_scorp")
+    markup.add(subscribe_button)
+
+    bot.send_message(user_id, start_message, parse_mode='HTML', disable_web_page_preview=True, reply_markup=markup)
 
 @bot.message_handler(commands=['language'])
 def set_language(message):
@@ -117,7 +124,7 @@ def gpt_message(message):
         response_message = '✎┊‌اللغة المستخدمة غير صالحة. يرجى استخدام اللغة المحددة فقط.\n\n Invalid language used. Please use the selected language only.'
         format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
         if format_type == 'html':
-            bot.send_message(user_id, f'<b>{error_message}</b>', parse_mode='HTML')
+            bot.send_message(user_id, f'<b>{response_message}</b>', parse_mode='HTML')
         else:
             bot.send_message(user_id, response_message, parse_mode='Markdown')
         return

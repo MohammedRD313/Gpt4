@@ -2,7 +2,6 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from gpt import gpt
-import language_tool_python
 
 # الحصول على توكن البوت من المتغير البيئي
 TOKEN = os.getenv('TOKEN')
@@ -11,12 +10,6 @@ if not TOKEN:
 
 # إنشاء بوت Telegram
 bot = telebot.TeleBot(TOKEN)
-
-# تهيئة أداة التصحيح اللغوي
-tools = {
-    'ar': language_tool_python.LanguageTool('ar'),
-    'en': language_tool_python.LanguageTool('en')
-}
 
 # تخزين تفضيلات المستخدمين
 user_preferences = {}
@@ -109,7 +102,7 @@ def set_format(message):
             language = user_preferences[user_id].get('language', 'ar')
             response_message = messages[language]['set_format'].format(format=fmt.capitalize())
         else:
-            response_message = '✎┊‌ تنسيق غير مدعوم. يرجى اختيار "html" أو "markdown". \n\n Unsupported format. Please choose "html" or "markdown".'
+            response_message = '✎┊‌ لغة غير مدعومة. يرجى اختيار "ar" للغة العربية أو "en" للغة الإنجليزية. \n\n Unsupported language. Please choose "ar" for Arabic or "en" for English.'
     else:
         response_message = 'Please specify a format. Usage: /format [html/markdown]'
     
@@ -139,17 +132,11 @@ def gpt_message(message):
     try:
         # إرسال الرسالة إلى دالة gpt واستلام الرد
         response = gpt(text)
-        
-        # تصحيح النص
-        tool = tools.get(language, tools['en'])  # استخدم أداة التصحيح المناسبة بناءً على اللغة
-        corrections = tool.check(response)
-        corrected_response = language_tool_python.utils.correct(response, corrections)
-
         response_prefix = messages[language]['response_prefix']
-        formatted_response = f"**{corrected_response}**"
+        formatted_response = f"**{response}**"
         format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
         if format_type == 'html':
-            bot.send_message(user_id, f'{response_prefix}<b>{corrected_response}</b>', parse_mode='HTML')
+            bot.send_message(user_id, f'{response_prefix}<b>{response}</b>', parse_mode='HTML')
         else:
             bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
     except Exception as e:

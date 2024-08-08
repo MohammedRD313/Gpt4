@@ -80,7 +80,7 @@ def process_arabic_symbols(text):
         '[': ' [ ',
         '%': ' % ',
         '=': ' = ',
-        '|': ' | ',
+        '|': ' | '
     }
     for symbol, replacement in symbols_map.items():
         text = text.replace(symbol, replacement)

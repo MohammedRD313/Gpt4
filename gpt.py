@@ -1,56 +1,30 @@
 import pytgpt.phind
-import gpt
-# إنشاء مثيل من بوت PHIND
-bot = pytgpt.phind.PHIND()
 
-class EnhancedGPT:
-    def __init__(self, bot):
-        self.bot = bot
-        self.context = []
-
-    def add_to_context(self, message):
-        """إضافة الرسالة إلى السياق."""
-        self.context.append(message)
-        if len(self.context) > 10:  # حصر عدد الرسائل المخزنة في السياق
-            self.context.pop(0)
-
-    def generate_prompt(self, message):
-        """توليد المحفز باستخدام السياق."""
-        context_str = "\n".join(self.context)
-        return f"Context:\n{context_str}\nUser: {message}"
+class ChatBot:
+    def __init__(self):
+        self.bot = pytgpt.phind.PHIND()
 
     def gpt(self, message):
         try:
-            cleaned_message = message.strip()
-            self.add_to_context(f"User: {cleaned_message}")
-            
-            prompt = self.generate_prompt(cleaned_message)
-            response = self.bot.chat(prompt)
-
-            if response:
-                self.add_to_context(f"Bot: {response}")
+            if isinstance(message, str):
+                response = self.bot.chat(message)
                 return response
+            elif isinstance(message, list):
+                responses = [self.bot.chat(msg) for msg in message]
+                return responses
             else:
-                return "No response received from the service."
-
+                return "Unsupported input type. Please provide a string or a list of strings."
         except Exception as e:
             return f"An error occurred: {str(e)}"
 
-    def clear_context(self):
-        """تفريغ السياق إذا لزم الأمر."""
-        self.context = []
+# Usage
+chatbot = ChatBot()
 
-# مثال على كيفية استخدام الكود المحسن
-if __name__ == "__main__":
-    gpt_instance = EnhancedGPT(bot)
-    
-    # اختبار السؤال الأول
-    test_message1 = "What's the weather like today?"
-    print(gpt_instance.gpt(test_message1))
-    
-    # اختبار سؤال آخر مع الحفاظ على السياق
-    test_message2 = "How about tomorrow?"
-    print(gpt_instance.gpt(test_message2))
-    
-    # تفريغ السياق إذا لزم الأمر
-    gpt_instance.clear_context()
+# Single message
+response = chatbot.gpt("مرحبًا، كيف حالك؟")
+print(response)
+
+# Multiple messages
+responses = chatbot.gpt(["ما هي أخبار الطقس اليوم؟", "هل يمكنك مساعدتي في البرمجة؟"])
+for res in responses:
+    print(res)

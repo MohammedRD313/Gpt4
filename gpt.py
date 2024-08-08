@@ -1,26 +1,30 @@
 import pytgpt.phind
+import requests
+from bs4 import BeautifulSoup
 
-# إنشاء صف للتحكم في عملية الدردشة
-class ChatBot:
-    def __init__(self):
-        self.bot = pytgpt.phind.PHIND()
+bot = pytgpt.phind.PHIND()
 
-    def gpt(self, message):
-        # التحقق من أن المدخل هو نص
-        if not isinstance(message, str):
-            return "Error: Input must be a string."
+def gpt(message):
+    return bot.chat(f'{message}')
 
-        try:
-            # إرسال الرسالة إلى البوت والحصول على الرد
-            response = self.bot.chat(message)
-            return response
-        except Exception as e:
-            # إدارة أي أخطاء قد تحدث أثناء الدردشة
-            return f"An error occurred: {str(e)}"
+def search_web(query):
+    url = f"https://www.google.com/search?q={query}"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    results = []
 
-# استخدام البوت
-chatbot = ChatBot()
+    for item in soup.find_all('h3'):
+        results.append(item.get_text())
 
-# مثال على إرسال رسالة واحدة
-response = chatbot.gpt("مرحبًا، كيف حالك؟")
-print(response)
+    return results
+
+def main(message):
+    if "بحث" in message:
+        query = message.replace("بحث", "").strip()
+        return search_web(query)
+    else:
+        return gpt(message)
+
+# Example usage
+print(main("بحث عن Python programming"))

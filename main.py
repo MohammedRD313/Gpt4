@@ -89,15 +89,30 @@ def show_commands(message):
 def gpt_message(message):
     user_id = message.chat.id
     language = user_languages.get(user_id, 'ar')  # اللغة الافتراضية هي العربية
-    try:
-        # إرسال الرسالة إلى دالة gpt واستلام الرد
-        response = gpt(message.text)
-        response_prefix = messages[language]['response_prefix']
-        bot.send_message(user_id, f'<b>{response_prefix}{response}</b>', parse_mode='HTML')
-    except Exception as e:
-        # التعامل مع الأخطاء وإرسال رسالة تنبيهية
-        error_message = messages[language]['error'].format(error=e)
-        bot.send_message(user_id, error_message, parse_mode='HTML')
+    text = message.text
+    # التحقق من أن النص المدخل باللغة المحددة للمستخدم
+    if (language == 'ar' and is_arabic(text)) or (language == 'en' and is_english(text)):
+        try:
+            # إرسال الرسالة إلى دالة gpt واستلام الرد
+            response = gpt(text)
+            response_prefix = messages[language]['response_prefix']
+            bot.send_message(user_id, f'<b>{response_prefix}{response}</b>', parse_mode='HTML')
+        except Exception as e:
+            # التعامل مع الأخطاء وإرسال رسالة تنبيهية
+            error_message = messages[language]['error'].format(error=e)
+            bot.send_message(user_id, error_message, parse_mode='HTML')
+    else:
+        error_message = 'الرجاء إرسال الرسائل باللغة المحددة.'
+        bot.send_message(user_id, error_message)
+
+# دوال للتحقق من اللغة
+def is_arabic(text):
+    # التحقق من النص العربي
+    return all('\u0600' <= c <= '\u06FF' or c.isspace() for c in text)
+
+def is_english(text):
+    # التحقق من النص الإنجليزي
+    return all('a' <= c.lower() <= 'z' or c.isspace() for c in text)
 
 # بدء الاستماع للرسائل
 bot.infinity_polling()

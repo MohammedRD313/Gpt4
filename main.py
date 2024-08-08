@@ -97,7 +97,7 @@ def gpt_message(message):
             response = gpt(text)
             response_prefix = messages[language]['response_prefix']
             # إضافة الأحرف الخلفية حول الرد لجعله يبدو ككود
-            formatted_response = f"```{response}```"
+            formatted_response = f"{response}"
             bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
         except Exception as e:
             # التعامل مع الأخطاء وإرسال رسالة تنبيهية

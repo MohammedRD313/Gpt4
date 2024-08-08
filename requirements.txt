@@ -7,4 +7,4 @@ openai==0.28
 transformers
 pyspellchecker
 farasa
-language_tool_python:
+language_tool_python

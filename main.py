@@ -3,6 +3,8 @@ import os
 from gpt import gpt
 from spellchecker import SpellChecker
 from camel_tools.spell import ArabSpellChecker
+from camel_tools.tokenizers import word_tokenize
+from camel_tools.parser import Parser
 
 # الحصول على توكن البوت من المتغير البيئي
 TOKEN = os.getenv('TOKEN')
@@ -67,6 +69,9 @@ spell_checker_en = SpellChecker(language='en')
 # إنشاء كائن ArabSpellChecker للغة العربية
 spell_checker_ar = ArabSpellChecker()
 
+# إنشاء كائن Parser للغة العربية
+parser = Parser()
+
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
@@ -88,7 +93,7 @@ def set_language(message):
             response_message = 'Unsupported language. Please choose "ar" for Arabic or "en" for English.'
     else:
         response_message = 'Please specify a language code. Usage: /language [ar/en]'
-
+    
     bot.send_message(user_id, response_message)
 
 @bot.message_handler(commands=['format'])
@@ -106,7 +111,7 @@ def set_format(message):
             response_message = 'Unsupported format. Please choose "html" or "markdown".'
     else:
         response_message = 'Please specify a format. Usage: /format [html/markdown]'
-
+    
     bot.send_message(user_id, response_message)
 
 @bot.message_handler(commands=['commands'])
@@ -124,11 +129,22 @@ def gpt_message(message):
 
     # معالجة الأخطاء الإملائية
     if language == 'en':
-        corrected_text = ' '.join(spell_checker_en.candidates(word)[0] if word not in spell_checker_en else word for word in text.split())
+        tokens = text.split()
+        corrected_tokens = [spell_checker_en.candidates(word).pop() if word not in spell_checker_en else word for word in tokens]
+        corrected_text = ' '.join(corrected_tokens)
     elif language == 'ar':
-        corrected_text = ' '.join(spell_checker_ar.correct(word) for word in text.split())
+        tokens = text.split()
+        corrected_tokens = [spell_checker_ar.correct(word) for word in tokens]
+        corrected_text = ' '.join(corrected_tokens)
     else:
         corrected_text = text  # إذا كانت اللغة غير مدعومة، استخدم النص كما هو
+
+    # تحليل النصوص العربية لإضافة إعراب ونحو
+    if language == 'ar':
+        tokens = word_tokenize(corrected_text)
+        parsed = parser.parse(tokens)
+        # دمج التحليل النحوي والإعرابي مع النص المصحح
+        corrected_text = ' '.join(f"{word}/{analysis}" for word, analysis in zip(tokens, parsed))
 
     # التحقق من أن النص المدخل باللغة المحددة للمستخدم
     if (language == 'ar' and is_arabic(corrected_text)) or (language == 'en' and is_english(corrected_text)):
@@ -149,11 +165,11 @@ def gpt_message(message):
 # دوال للتحقق من اللغة
 def is_arabic(text):
     # التحقق من النص العربي
-    return all('\u0600' <= c <= '\u06FF' or c.isspace() for c in text)
+    return any('\u0600' <= c <= '\u06FF' or c.isspace() for c in text)
 
 def is_english(text):
     # التحقق من النص الإنجليزي
-    return all('a' <= c.lower() <= 'z' or c.isspace() for c in text)
+    return any('a' <= c.lower() <= 'z' or c.isspace() for c in text)
 
 # بدء الاستماع للرسائل
 bot.infinity_polling()

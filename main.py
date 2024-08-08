@@ -113,6 +113,15 @@ def gpt_message(message):
     user_id = message.chat.id
     language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
     text = message.text
+    if (language == 'ar' and not is_arabic(text)) or (language == 'en' and not is_english(text)):
+        response_message = 'Invalid language used. Please use the selected language only.'
+        format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
+        if format_type == 'html':
+            bot.send_message(user_id, f'<b>{response_message}</b>', parse_mode='HTML')
+        else:
+            bot.send_message(user_id, response_message, parse_mode='Markdown')
+        return
+    
     try:
         # إرسال الرسالة إلى دالة gpt واستلام الرد
         response = gpt(text)
@@ -135,11 +144,11 @@ def gpt_message(message):
 # دوال للتحقق من اللغة
 def is_arabic(text):
     # التحقق من النص العربي
-    return all('\u0600' <= c <= '\u06FF' or c.isspace() for c in text)
+    return all('\u0600' <= c <= '\u06FF' or c.isspace() or c in {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B'} for c in text)
 
 def is_english(text):
     # التحقق من النص الإنجليزي
-    return all('a' <= c.lower() <= 'z' or c.isspace() for c in text)
+    return all('a' <= c.lower() <= 'z' or c.isspace() or c in {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
 
 # بدء الاستماع للرسائل
 bot.infinity_polling()

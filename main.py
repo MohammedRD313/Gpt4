@@ -8,13 +8,12 @@ genai.configure(api_key="AIzaSyBtv6W1BL7GrcQD14P07nKdG50vHucNouU")
 
 # Define the model generation configuration
 generation_config = {
+  "tegeneration_config = {
   "temperature": 0.9,
   "top_p": 1,
   "top_k": 1,
   "max_output_tokens": 2048,
 }
-
-# Define the safety settings for the model
 safety_settings = [
   {
     "category": "HARM_CATEGORY_HARASSMENT",
@@ -35,7 +34,7 @@ safety_settings = [
 ]
 
 # Create the Generative Model instance
-model = genai.GenerativeModel(model_name="gemini-pro"",
+model = genai.GenerativeModel(model_name="gemini-pro",
                generation_config=generation_config,
                safety_settings=safety_settings)
 

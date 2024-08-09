@@ -40,7 +40,7 @@ model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
                safety_settings=safety_settings)
 
 # Set up Telegram bot
-token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
+token = "6186196925:AAEbicH-n4pgwTcgqQy_rkIYa43iFwQWseA"
 bot = telebot.TeleBot(token)
 
 # Handle '/start' command to send a welcome message

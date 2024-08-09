@@ -1,164 +1,118 @@
+import google.generativeai as genai
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-import os
-from gpt import gpt
+import datetime
+from telebot import types
 
-# الحصول على توكن البوت من المتغير البيئي
-TOKEN = os.getenv('TOKEN')
-if not TOKEN:
-    raise ValueError("لم يتم تعيين متغير البيئة 'TOKEN'.")
+# Set up Google Generative AI
+genai.configure(api_key="AIzaSyBtv6W1BL7GrcQD14P07nKdG50vHucNouU")
 
-# إنشاء بوت Telegram
-bot = telebot.TeleBot(TOKEN)
-
-# تخزين تفضيلات المستخدمين
-user_preferences = {}
-
-# رسائل الترحيب واستجابة خاصة لكل لغة
-messages = {
-    'ar': {
-        'start': (
-            '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب.</b>'
-            '<b>يمكنك طرح أي سؤال أو طلب ، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\n'
-            '<b>للتحويل الى اللغه الانجليزيه استخدم الأمر</b> \n{ <code>/language en</code> }\n\n'
-            '<b>تم الصنيع بواسطة:</b>\n'
-            'المطور <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
-            'المطور <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
-        ),
-        'commands': (
-            '**الأوامر المتاحة:**\n'
-            '`/start` - بدء التفاعل مع البوت\n'
-            '`/language [ar/en]` - تغيير اللغة\n'
-            '`/format [html/markdown]` - تغيير تنسيق الرسائل\n'
-        ),
-        'set_language': 'تم التغيير الى اللغة العربية.',
-        'set_format': 'تم تغيير التنسيق إلى {format}.',
-        'error': 'حدث خطأ: {error}',
-        'response_prefix': '**العقرب:** '
-    },
-    'en': {
-        'start': (
-            '<a href="https://t.me/ScorGPTbot">𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n'
-            '<b>✎┊‌ Welcome to the Scorpio AI bot.</b>'
-            '<b>You can ask any question or request a service, and we will be happy to answer it, God willing 😁</b>\n\n'
-            '<b>To switch to Arabic, use the command</b> \n{ <code>/language ar</code> }\n\n'
-            '<b>Created by:</b>\n'
-            'Developer <a href="https://t.me/Zo_r0">𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \n'
-            'Developer <a href="https://t.me/I_e_e_l">𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>'
-        ),
-        'commands': (
-            '**Available commands:**\n'
-            '`/start` - Start interacting with the bot\n'
-            '`/language [ar/en]` - Change language\n'
-            '`/format [html/markdown]` - Change message format\n'
-        ),
-        'set_language': 'Language set to English.',
-        'set_format': 'Format set to {format}.',
-        'error': 'An error occurred: {error}',
-        'response_prefix': '**Scorpio:** '
-    }
+# Define the model generation configuration
+generation_config = {
+  "temperature": 0.9,
+  "top_p": 1,
+  "top_k": 1,
+  "max_output_tokens": 2048,
 }
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    user_id = message.chat.id
-    language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
-    start_message = messages[language]['start']
+# Define the safety settings for the model
+safety_settings = [
+  {
+    "category": "HARM_CATEGORY_HARASSMENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_HATE_SPEECH",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+]
 
-    # إنشاء زر للاشتراك في القناة
-    markup = InlineKeyboardMarkup()
-    subscribe_button = InlineKeyboardButton("𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻 ", url="https://t.me/Scorpion_scorp")
+# Create the Generative Model instance
+model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+               generation_config=generation_config,
+               safety_settings=safety_settings)
+
+# Set up Telegram bot
+token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
+bot = telebot.TeleBot(token)
+
+# Handle '/start' command to send a welcome message
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    # Create the inline keyboard with a subscription button
+    markup = types.InlineKeyboardMarkup()
+    subscribe_button = types.InlineKeyboardButton("𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻", url="https://t.me/Scorpion_scorp")
     markup.add(subscribe_button)
 
-    bot.send_message(user_id, start_message, parse_mode='HTML', disable_web_page_preview=True, reply_markup=markup)
+    # Send the welcome message with the inline keyboard
+    bot.send_message(
+        message.chat.id,
+        "<a href='https://t.me/ScorGPTbot'>𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰</a>\n\n<b>✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁</b>\n\nالمطور <a href='https://t.me/Zo_r0'>𝗠𝗼𝗵𝗮𝗺𝗲𝗱</a> \nالمطور <a href='https://t.me/I_e_e_l'>𝗔𝗹𝗹𝗼𝘂𝘀𝗵</a>",
+        parse_mode='HTML',
+        disable_web_page_preview=True,
+        reply_markup=markup
+    )
 
-@bot.message_handler(commands=['language'])
-def set_language(message):
-    user_id = message.chat.id
-    if len(message.text.split()) > 1:
-        lang = message.text.split()[1].lower()
-        if lang in messages:
-            if user_id not in user_preferences:
-                user_preferences[user_id] = {}
-            user_preferences[user_id]['language'] = lang
-            response_message = messages[lang]['set_language']
-        else:
-            response_message = '✎┊‌ لغة غير مدعومة. يرجى اختيار "ar" للغة العربية أو "en" للغة الإنجليزية. \n\n Unsupported language. Please choose "ar" for Arabic or "en" for English.'
-    else:
-        response_message = 'Please specify a language code. Usage: /language [ar/en]'
-    
-    bot.send_message(user_id, response_message, parse_mode='Markdown')
+# Handle messages from users
+@bot.message_handler(func=lambda message: True)
+def echo_message(message):
+    # Extract the user's message
+    user_message = message.text
 
-@bot.message_handler(commands=['format'])
-def set_format(message):
-    user_id = message.chat.id
-    if len(message.text.split()) > 1:
-        fmt = message.text.split()[1].lower()
-        if fmt in ['html', 'markdown']:
-            if user_id not in user_preferences:
-                user_preferences[user_id] = {}
-            user_preferences[user_id]['format'] = fmt.capitalize()
-            language = user_preferences[user_id].get('language', 'ar')
-            response_message = messages[language]['set_format'].format(format=fmt.capitalize())
-        else:
-            response_message = '✎┊‌ لغة غير مدعومة. يرجى اختيار "ar" للغة العربية أو "en" للغة الإنجليزية. \n\n Unsupported language. Please choose "ar" for Arabic or "en" for English.'
-    else:
-        response_message = 'Please specify a format. Usage: /format [html/markdown]'
-    
-    bot.send_message(user_id, response_message, parse_mode='Markdown')
+    # Send a preliminary response
+    message_id = bot.send_message(message.chat.id, "*✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳*", parse_mode='Markdown').message_id
 
-@bot.message_handler(commands=['commands'])
-def show_commands(message):
-    user_id = message.chat.id
-    language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
-    commands_message = messages[language]['commands']
-    bot.send_message(user_id, commands_message, parse_mode='Markdown')
+    # Construct the prompt for the model
+    prompt_parts = [user_message]
 
-@bot.message_handler(content_types=['text'])
-def gpt_message(message):
-    user_id = message.chat.id
-    language = user_preferences.get(user_id, {}).get('language', 'ar')  # اللغة الافتراضية هي العربية
-    text = message.text
-    if (language == 'ar' and not is_arabic(text)) or (language == 'en' and not is_english(text)):
-        response_message = '**✎┊‌اللغة المستخدمة غير صالحة. يرجى استخدام اللغة المحددة فقط.\n\n Invalid language used. Please use the selected language only.**'
-        format_type = user_preferences.get(user_id, {}).get('format', 'MarkdownV2')
-        if format_type == 'html':
-            bot.send_message(user_id, f'<b>{response_message}</b>', parse_mode='HTML')
-        else:
-            bot.send_message(user_id, response_message, parse_mode='Markdown')
-        return
-    
     try:
-        # إرسال الرسالة إلى دالة gpt واستلام الرد
-        response = gpt(text)
-        response_prefix = messages[language]['response_prefix']
-        formatted_response = f"**{response}**"
-        format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
-        if format_type == 'html':
-            bot.send_message(user_id, f'{response_prefix}<b>{response}</b>', parse_mode='HTML')
+        # Generate a response using the model
+        response = model.generate_content(prompt_parts)
+
+        # Add the "العقرب: " prefix to the response
+        final_response = f"*العقرب:*\n{response.text}"
+
+        # Add information about the bot creator
+        if any(phrase in user_message for phrase in ["من صنعك", "من هو صاحبك", "من أنشأك", "من انت", "من مطورك", "من مبرمج البوت", "من مبرمجك", "من مطور البوت"]):
+            bot.send_message(message.chat.id, "*العقرب:*\n\n*أنا نموذج ذكاء اصطناعي تمت برمجتي بواسطة فريق العقرب *", parse_mode='Markdown')
+
+        # Add local time and date in Riyadh/Saudi Arabia timezone
+        elif any(phrase in user_message for phrase in ["الوقت", "التاريخ"]):
+            now = datetime.datetime.now()
+            time = now.strftime("%H:%M")
+            date = now.strftime("%Y-%m-%d")
+            bot.send_message(message.chat.id, f"*العقرب:*\n\n*الوقت المحلي:* {time} _بتوقيت الرياض / السعودية_\n*التاريخ المحلي:* {date}", parse_mode='Markdown')
+
+        # Add information about Palestine (Add specific handling if required)
+        elif any(phrase in user_message for phrase in ["كيف حالك", "كيف انت"]):
+            bot.send_message(message.chat.id, "*العقرب:*\n*انا بخير والحمد لله وانت كيف حالك .*", parse_mode='Markdown')
+            
+
+        # Add information about Israel (Add specific handling if required)
+
+        # Add information about the source
+        elif any(phrase in user_message for phrase in ["سورس العقرب", "العقرب"]):
+            bot.send_message(message.chat.id, "*العقرب:*\n*اقوى سورس تلغرام عربي.*", parse_mode='Markdown')
+
+
         else:
-            bot.send_message(user_id, f'{response_prefix}{formatted_response}', parse_mode='Markdown')
-    except Exception as e:
-        # التعامل مع الأخطاء وإرسال رسالة تنبيهية
-        error_message = messages[language]['error'].format(error=e)
-        format_type = user_preferences.get(user_id, {}).get('format', 'markdown')
-        if format_type == 'html':
-            bot.send_message(user_id, f'<b>{error_message}</b>', parse_mode='HTML')
-        else:
-            bot.send_message(user_id, error_message, parse_mode='Markdown')
+            # Send the generated response back to the user
+            bot.send_message(message.chat.id, final_response, parse_mode='Markdown')
 
-# دوال للتحقق من اللغة
-def is_arabic(text):
-    # التحقق من النص العربي ودعمه للرموز الإنجليزية
-    return all('\u0600' <= c <= '\u06FF' or c.isspace() or c in {'\u0020', '\u002D', '\u002E', '\u002C', '\u003A', '\u003B', 
-           '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', 
-           '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
+        # Delete the preliminary response
+        bot.delete_message(message.chat.id, message_id)
 
-def is_english(text):
-    # التحقق من النص الإنجليزي
-    return all('a' <= c.lower() <= 'z' or c.isspace() or c in {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', 
-           '[', ']', '{', '}', ';', ':', '"', '\'', ',', '.', '/', '<', '>', '?', '\\', '|', '`', '~'} for c in text)
+    except Exception:
+        # Handle the exception and send an error message to the user
+        bot.send_message(message.chat.id, "*العقرب:*\n\nعذراً، لا يمكنني الإجابة على سؤالك.", parse_mode='Markdown')
+        bot.delete_message(message.chat.id, message_id)
 
-# بدء الاستماع للرسائل
-bot.infinity_polling()
+# Start the bot
+bot.polling()

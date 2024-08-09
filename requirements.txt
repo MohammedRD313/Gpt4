@@ -8,3 +8,6 @@ transformers
 pyspellchecker
 farasa
 language_tool_python
+pyTelegramBotAPI==4.14.0
+google-generativeai
+aiohttp

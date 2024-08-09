@@ -1,15 +1,2 @@
-pip install openai
-# إنشاء بيئة افتراضية
-python -m venv myenv
-
-# تفعيل البيئة الافتراضية
-# على نظام Windows
-myenv\Scripts\activate
-
-# على نظام macOS/Linux
-source myenv/bin/activate
-
-pip install --upgrade pytgpt
-
-# تثبيت مكتبة openai
+gcloud app deploy
 python3 main.py
